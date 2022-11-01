@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+  mautrix-signal:
+    container_name: mautrix-signal
+    image: dock.mau.dev/mautrix/signal
+    restart: unless-stopped
+    volumes:
+      - ./signal:/data
+      - ./signald:/signald
+    ports:
+      - 29328:29328
+    depends_on:
+      - signald
+      - db
+      - synapse
+  signald:
+    container_name: signald
+    image: registry.gitlab.com/signald/signald
+    restart: unless-stopped
+    volumes:
+      - ./signald:/signald
+  telegram:
+    container_name: matrix_telegram
+    image: dock.mau.dev/mautrix/telegram:latest
+    ports:
+      - 29317:29317
+    volumes:
+      - ./telegram:/data
+    depends_on:
+      - synapse
+  db:
+    image: postgres:13-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=<CHANGE_ME>
+    volumes:
+      - ./db:/var/lib/postgresql/data
+  synapse:
+    image: matrixdotorg/synapse:latest
+    restart: unless-stopped
+    ports:
+      - 8008:8008
+    volumes:
+      - ./synapse:/data
+    depends_on:
+      - db
