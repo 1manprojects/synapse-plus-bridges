@@ -28,6 +28,7 @@ services:
     volumes:
       - ./telegram:/data
     depends_on:
+      - db
       - synapse
   db:
     image: postgres:13-alpine
