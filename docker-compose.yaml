@@ -23,6 +23,7 @@ services:
   telegram:
     container_name: matrix_telegram
     image: dock.mau.dev/mautrix/telegram:latest
+    restart: unless-stopped
     ports:
       - 29317:29317
     volumes:
